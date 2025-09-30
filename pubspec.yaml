@@ -1,0 +1,77 @@
+name: lokakarya
+description: "LokaKarya - Aplikasi Marketplace UMKM Lokal"
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  provider: ^6.1.5+1
+  flutter_launcher_icons: ^0.14.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+  flutter_native_splash: ^2.4.6
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/app_icon.png"
+  adaptive_icon_foreground: "assets/icons/icon_foreground.png"
+  adaptive_icon_background: "assets/icons/icon_background.png"
+  adaptive_icon_monochrome: "assets/icons/icon_monochrome.png"
+
+flutter_native_splash:
+  android: true
+  ios: true
+
+  color: "#FF8C42"
+  image: assets/images/app_logo.png
+  branding: assets/images/brand_logo.png
+
+  branding_bottom_padding_ios: 35
+
+  android_12:
+    color: "#FF8C42"
+    image: assets/images/splash_icon.png
+    icon_background_color: "#FFFFFF"
+    branding: assets/images/brand_logo.png
+
+flutter:
+  uses-material-design: true
+
+  assets:
+   - assets/images/
+   - assets/icons/
+
+  fonts:
+   - family: Poppins
+     fonts:
+       - asset: assets/fonts/Poppins-ExtraBold.ttf
+         weight: 800
+       - asset: assets/fonts/Poppins-Bold.ttf
+         weight: 700
+       - asset: assets/fonts/Poppins-SemiBold.ttf
+         weight: 600
+       - asset: assets/fonts/Poppins-Medium.ttf
+         weight: 500
+       - asset: assets/fonts/Poppins-Regular.ttf
+         weight: 400
+       - asset: assets/fonts/Poppins-Light.ttf
+         weight: 300
+       - asset: assets/fonts/Poppins-ExtraLight.ttf
+         weight: 200
+       - asset: assets/fonts/Poppins-Thin.ttf
+         weight: 100
+   - family: Signika
+     fonts:
+       - asset: assets/fonts/Signika-Bold.ttf
+         weight: 700

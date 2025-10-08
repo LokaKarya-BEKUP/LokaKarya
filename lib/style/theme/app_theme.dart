@@ -10,7 +10,7 @@ class AppTheme {
       brightness: Brightness.light,
       colorScheme: _lightColorScheme,
       textTheme: _textTheme,
-      appBarTheme: _appBarTheme,
+      appBarTheme: _appBarTheme(_lightColorScheme),
       elevatedButtonTheme: elevatedButtonTheme(_lightColorScheme),
       inputDecorationTheme: inputDecorationTheme(_lightColorScheme),
     );
@@ -23,7 +23,7 @@ class AppTheme {
       brightness: Brightness.dark,
       colorScheme: _darkColorScheme,
       textTheme: _textTheme,
-      appBarTheme: _appBarTheme,
+      appBarTheme: _appBarTheme(_darkColorScheme),
       elevatedButtonTheme: elevatedButtonTheme(_darkColorScheme),
       inputDecorationTheme: inputDecorationTheme(_darkColorScheme),
     );
@@ -35,6 +35,8 @@ class AppTheme {
     onPrimary: Colors.white,
     secondary: AppColors.primary50,
     onSecondary: Colors.white,
+    surface: Colors.white,
+    onSurface: Colors.black,
     error: AppColors.error50,
     onError: Colors.white,
     outline: AppColors.neutral70,
@@ -46,6 +48,8 @@ class AppTheme {
     onPrimary: Colors.white,
     secondary: AppColors.primary70,
     onSecondary: Colors.white,
+    surface: Colors.black,
+    onSurface: Colors.white,
     error: AppColors.error50,
     onError: Colors.white,
     outline: AppColors.neutral10,
@@ -73,11 +77,15 @@ class AppTheme {
   }
 
   /// AppBar Style
-  static AppBarTheme get _appBarTheme {
+  static AppBarTheme _appBarTheme(ColorScheme colorScheme) {
     return AppBarTheme(
       centerTitle: true,
       elevation: 0,
-      titleTextStyle: _textTheme.titleLarge,
+      backgroundColor: colorScheme.surface,
+      foregroundColor: colorScheme.onSurface,
+      titleTextStyle: _textTheme.titleLarge?.copyWith(
+        color: colorScheme.onSurface,
+      ),
     );
   }
 

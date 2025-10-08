@@ -8,8 +8,8 @@ class AuthHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 250,
       width: double.infinity,
+      padding: EdgeInsets.only(bottom: 32, top: 16),
       alignment: Alignment.center,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

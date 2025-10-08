@@ -1,13 +1,75 @@
 import 'package:flutter/material.dart';
 import 'package:lokakarya/provider/auth/signin/signin_provider.dart';
 import 'package:lokakarya/static/navigation_route.dart';
+import 'package:lokakarya/static/signin_result_state.dart';
+import 'package:lokakarya/utils/app_snackbar.dart';
 import 'package:lokakarya/widgets/auth_header.dart';
 import 'package:lokakarya/widgets/auth_text_field.dart';
 import 'package:provider/provider.dart';
 
-class SignInScreen extends StatelessWidget {
-  SignInScreen({super.key});
+class SignInScreen extends StatefulWidget {
+  const SignInScreen({super.key});
+
+  @override
+  State<SignInScreen> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleSignIn() async {
+    /// Validasi form
+    if (!_formKey.currentState!.validate()) return;
+
+    final provider = context.read<SignInProvider>();
+
+    /// Proses Sign in
+    await provider.signIn(
+      _emailController.text.trim(),
+      _passwordController.text.trim(),
+    );
+
+    final state = provider.resultState;
+
+    /// Sign in success
+    if (state is SignInSuccessState) {
+      if (!mounted) return;
+
+      showAppSnackBar(
+        context: context,
+        message: "Login berhasil!",
+        type: SnackBarType.success
+      );
+      
+      Future.delayed(const Duration(milliseconds: 800), () {
+        if (!mounted) return;
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          NavigationRoute.mainRoute.name,
+          (route) => false,
+        );
+      });
+    }
+    /// Sign in failed
+    else if (state is SignInErrorState) {
+      if (!mounted) return;
+
+      showAppSnackBar(
+        context: context,
+        message: state.error,
+        type: SnackBarType.error
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,123 +78,140 @@ class SignInScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: colorScheme.primary,
-      body: Column(
-        children: [
-          /// Header (Logo & App Name)
-          AuthHeader(),
-
-          /// Body Content (Form & Button)
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(32),
-                  topRight: Radius.circular(32),
+      body: SafeArea(
+        top: true,
+        bottom: false,
+        child: Column(
+          children: [
+            /// Header (Logo & App Name)
+            AuthHeader(),
+        
+            /// Body Content (Form & Button)
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(32),
+                    topRight: Radius.circular(32),
+                  ),
+                  color: colorScheme.surface,
                 ),
-                color: colorScheme.surface,
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // Title & Subtitle
-                    Column(
-                      children: [
-                        Text("Selamat Datang", style: textTheme.headlineMedium),
-                        const SizedBox(height: 8),
-                        Text(
-                          "Masuk dan temukan produk lokal di sekitarmu",
-                          style: textTheme.bodyMedium,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 32),
-
-                    /// Form
-                    Consumer<SignInProvider>(
-                      builder: (context, provider, child) {
-                        return Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              /// Email
-                              AuthTextField(
-                                label: "Email",
-                                icon: Icons.email_outlined,
-                                keyboardType: TextInputType.emailAddress,
-                                validator: (value) =>
-                                    value == null || value.isEmpty
-                                    ? "Email tidak boleh kosong"
-                                    : null,
-                              ),
-                              const SizedBox(height: 16),
-
-                              /// Password
-                              AuthTextField(
-                                label: "Password",
-                                icon: Icons.lock_outline,
-                                obscureText: provider.isPasswordHidden,
-                                suffixIcon: Icon(
-                                  provider.isPasswordHidden
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
-                                  color: colorScheme.outline,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // Title & Subtitle
+                      Column(
+                        children: [
+                          Text("Selamat Datang", style: textTheme.headlineMedium),
+                          const SizedBox(height: 8),
+                          Text(
+                            "Masuk dan temukan produk lokal di sekitarmu",
+                            style: textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 32),
+        
+                      /// Form
+                      Consumer<SignInProvider>(
+                        builder: (context, provider, child) {
+                          final isLoading = provider.resultState is SignInLoadingState;
+        
+                          return Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                /// Email
+                                AuthTextField(
+                                  controller: _emailController,
+                                  label: "Email",
+                                  icon: Icons.email_outlined,
+                                  keyboardType: TextInputType.emailAddress,
+                                  validator: (value) =>
+                                      value == null || value.isEmpty
+                                      ? "Email tidak boleh kosong"
+                                      : null,
                                 ),
-                                onSuffixTap: provider.togglePasswordVisibility,
-                                validator: (value) =>
-                                    value == null || value.isEmpty
-                                    ? "Password tidak boleh kosong"
-                                    : null,
-                              ),
-                              const SizedBox(height: 32),
-
-                              /// Sign in Button
-                              ElevatedButton(
-                                onPressed: () {},
-                                child: const Text("Masuk"),
-                              ),
-                              const SizedBox(height: 16),
-
-                              /// Create Account Button
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Belum memiliki akun?",
-                                    style: textTheme.bodyMedium?.copyWith(
-                                      fontWeight: FontWeight.w400,
-                                    ),
+                                const SizedBox(height: 16),
+        
+                                /// Password
+                                AuthTextField(
+                                  controller: _passwordController,
+                                  label: "Password",
+                                  icon: Icons.lock_outline,
+                                  obscureText: provider.isPasswordHidden,
+                                  suffixIcon: Icon(
+                                    provider.isPasswordHidden
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                    color: colorScheme.outline,
                                   ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pushReplacementNamed(
-                                        context,
-                                        NavigationRoute.signUpRoute.name,
-                                      );
-                                    },
-                                    child: Text(
-                                      "Daftar",
+                                  onSuffixTap: provider.togglePasswordVisibility,
+                                  validator: (value) =>
+                                      value == null || value.isEmpty
+                                      ? "Password tidak boleh kosong"
+                                      : null,
+                                ),
+                                const SizedBox(height: 32),
+        
+                                /// Sign in Button
+                                ElevatedButton(
+                                  onPressed: isLoading ? null : () => _handleSignIn(),
+                                  child: isLoading
+                                    ? const SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : const Text("Masuk"),
+                                ),
+                                const SizedBox(height: 16),
+        
+                                /// Create Account Button
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Belum memiliki akun?",
                                       style: textTheme.bodyMedium?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                        color: colorScheme.primary,
+                                        fontWeight: FontWeight.w400,
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pushReplacementNamed(
+                                          context,
+                                          NavigationRoute.signUpRoute.name,
+                                        );
+                                      },
+                                      child: Text(
+                                        "Daftar",
+                                        style: textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          color: colorScheme.primary,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:lokakarya/data/model/product_list.dart';
+import 'package:lokakarya/data/model/product.dart';
+import 'package:lokakarya/data/model/store.dart';
 import 'package:lokakarya/static/navigation_route.dart';
 
 import '../../../widgets/product_card.dart';
 
 class ProductSection extends StatelessWidget {
-  final List<ProductList> products;
+  final List<Product> products;
+  final List<Store> stores;
 
-  const ProductSection({super.key, required this.products});
+  const ProductSection({
+    super.key,
+    required this.products,
+    required this.stores
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +45,8 @@ class ProductSection extends StatelessWidget {
           ),
           itemBuilder: (context, index) {
             final product = products[index];
+            final city = product.getStoreCity(stores);
+
             return ProductCard(
               onTap: () {
                 Navigator.pushNamed(
@@ -50,7 +58,7 @@ class ProductSection extends StatelessWidget {
               name: product.name,
               price: product.price,
               unit: product.unit,
-              city: product.city,
+              city: city,
               imageUrl: product.imageUrl ?? "",
             );
           },

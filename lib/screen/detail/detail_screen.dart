@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lokakarya/data/model/product_list.dart';
+import 'package:lokakarya/data/model/product.dart';
 
 class DetailScreen extends StatelessWidget {
-  final ProductList product;
+  final Product product;
 
   const DetailScreen({super.key, required this.product});
 

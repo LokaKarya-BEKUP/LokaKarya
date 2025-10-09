@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lokakarya/data/model/product_list.dart';
+import 'package:lokakarya/data/model/product.dart';
 import 'package:lokakarya/provider/auth/signin/signin_provider.dart';
 import 'package:lokakarya/provider/auth/signup/signup_provider.dart';
 import 'package:lokakarya/provider/main/index_nav_provider.dart';
@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
         NavigationRoute.signUpRoute.name: (context) => SignUpScreen(),
         NavigationRoute.mainRoute.name: (context) => const MainScreen(),
         NavigationRoute.detailRoute.name: (context) => DetailScreen(
-          product: ModalRoute.of(context)?.settings.arguments as ProductList,
+          product: ModalRoute.of(context)?.settings.arguments as Product,
         )
       },
     );

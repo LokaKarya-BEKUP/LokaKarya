@@ -55,7 +55,7 @@ class CategorySection extends StatelessWidget {
               final category = categories[index];
               return CategoryCard(
                 name: category.name,
-                imagePath: category.imagePath,
+                imagePath: category.imageUrl,
                 onTap: () {},
               );
             },

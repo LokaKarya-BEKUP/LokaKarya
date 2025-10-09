@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lokakarya/data/model/category.dart';
-import 'package:lokakarya/data/model/product_list.dart';
+import 'package:lokakarya/data/model/product.dart';
+import 'package:lokakarya/data/model/store.dart';
 import 'package:lokakarya/provider/main/index_nav_provider.dart';
 import 'package:lokakarya/screen/home/widgets/category_section.dart';
 import 'package:lokakarya/screen/home/widgets/header_section.dart';
@@ -37,7 +38,7 @@ class HomeScreen extends StatelessWidget {
                     const SizedBox(height: 24),
 
                     /// All Product Section
-                    ProductSection(products: dummyProductList),
+                    ProductSection(products: dummyProductList, stores: dummyStores),
                   ],
                 ),
               ),

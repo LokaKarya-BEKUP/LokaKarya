@@ -1,47 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:lokakarya/data/model/category.dart';
-
+import 'package:lokakarya/static/navigation_route.dart';
 import 'category_card.dart';
 
 class CategorySection extends StatelessWidget {
   final List<CategoryModel> categories;
-  final Function()? onSeeAll;
 
-  const CategorySection({
-    super.key,
-    required this.categories,
-    this.onSeeAll,
-  });
+  const CategorySection({super.key, required this.categories});
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         /// Header
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Kategori",
-              style: textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            TextButton(
-              onPressed: onSeeAll,
-              child: Text(
-                "Lihat Semua",
-                style: textTheme.labelMedium?.copyWith(
-                  color: colorScheme.primary,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ],
+        Text(
+          "Kategori",
+          style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
 
@@ -54,9 +31,14 @@ class CategorySection extends StatelessWidget {
             itemBuilder: (context, index) {
               final category = categories[index];
               return CategoryCard(
-                name: category.name,
-                imagePath: category.imageUrl,
-                onTap: () {},
+                category: category,
+                onTap: (selectedCategory) {
+                  Navigator.pushNamed(
+                    context,
+                    NavigationRoute.productListRoute.name,
+                    arguments: selectedCategory,
+                  );
+                },
               );
             },
           ),

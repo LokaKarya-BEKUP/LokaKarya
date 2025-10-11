@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
-
 import '../../../style/colors/app_colors.dart';
+import '../../../static/navigation_route.dart';
 
 class HeaderSection extends StatelessWidget {
   final String name;
   final Function() onSearchTap;
+  final Function() onProfileTap;
+  final Function() onNotificationTap;
 
-  const HeaderSection({super.key, required this.name, required this.onSearchTap});
+  const HeaderSection({
+    super.key,
+    required this.name,
+    required this.onSearchTap,
+    required this.onProfileTap,
+    required this.onNotificationTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,13 +22,10 @@ class HeaderSection extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 28,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 28),
       decoration: BoxDecoration(
         color: colorScheme.primary,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(24),
           bottomRight: Radius.circular(24),
         ),
@@ -37,14 +42,17 @@ class HeaderSection extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    /// Profile Picture
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: Image.asset(
-                        "assets/images/profile_default.png",
-                        width: 64,
-                        height: 64,
-                        fit: BoxFit.cover,
+                    /// Profile Picture (Tambahkan GestureDetector)
+                    GestureDetector(
+                      onTap: onProfileTap,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: Image.asset(
+                          "assets/images/profile_default.png",
+                          width: 64,
+                          height: 64,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -68,31 +76,31 @@ class HeaderSection extends StatelessWidget {
                           style: textTheme.bodyLarge?.copyWith(
                             color: colorScheme.onPrimary,
                           ),
-                        )
+                        ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
 
-              /// Notification Icon
-              Icon(
-                Icons.notifications,
-                color: colorScheme.onPrimary,
-                size: 32,
+              /// Notification Icon (Tambahkan GestureDetector)
+              GestureDetector(
+                onTap: onNotificationTap,
+                child: Icon(
+                  Icons.notifications,
+                  color: colorScheme.onPrimary,
+                  size: 32,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 24),
 
-          /// Search Button (Navigate to Search Screen)
+          /// Search Button
           GestureDetector(
             onTap: onSearchTap,
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: Color.alphaBlend(
                   colorScheme.surface.withAlpha(240),
@@ -102,10 +110,7 @@ class HeaderSection extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.search,
-                    color: colorScheme.primary,
-                  ),
+                  Icon(Icons.search, color: colorScheme.primary),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -122,7 +127,7 @@ class HeaderSection extends StatelessWidget {
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );

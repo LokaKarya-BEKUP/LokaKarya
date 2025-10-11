@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
-
 import '../../../style/colors/app_colors.dart';
+import '../../../data/model/category.dart';
 
 class CategoryCard extends StatelessWidget {
-  final String name;
-  final String imagePath;
-  final Function() onTap;
+  final CategoryModel category;
+  final Function(CategoryModel category) onTap;
 
-  const CategoryCard({
-    super.key,
-    required this.name,
-    required this.imagePath,
-    required this.onTap,
-  });
+  const CategoryCard({super.key, required this.category, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +14,7 @@ class CategoryCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: () => onTap(category),
       child: Container(
         width: 80,
         margin: const EdgeInsets.only(right: 8),
@@ -38,14 +32,17 @@ class CategoryCard extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(50),
-                child: Image.asset(imagePath, fit: BoxFit.cover),
+                child: Image.asset(
+                  category.imageUrl,
+                  fit: BoxFit.cover,
+                ), // GANTI INI
               ),
             ),
             const SizedBox(height: 8),
 
             /// Category Name
             Text(
-              name,
+              category.name,
               style: textTheme.labelMedium?.copyWith(
                 fontWeight: FontWeight.w500,
               ),

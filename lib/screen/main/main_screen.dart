@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lokakarya/provider/main/index_nav_provider.dart';
-import 'package:lokakarya/screen/category/category_screen.dart';
 import 'package:lokakarya/screen/favorite/favorite_screen.dart';
 import 'package:lokakarya/screen/home/home_screen.dart';
 import 'package:lokakarya/screen/profile/profile_screen.dart';
@@ -15,12 +14,7 @@ class MainScreen extends StatelessWidget {
     final readProvider = context.read<IndexNavProvider>();
     final colorScheme = Theme.of(context).colorScheme;
 
-    final pages = const [
-      HomeScreen(),
-      CategoryScreen(),
-      FavoriteScreen(),
-      ProfileScreen(),
-    ];
+    final pages = const [HomeScreen(), FavoriteScreen(), ProfileScreen()];
 
     return Scaffold(
       body: pages[watchProvider.indexBottomNavBar],
@@ -28,7 +22,7 @@ class MainScreen extends StatelessWidget {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withAlpha(25),
+              color: Colors.black.withOpacity(0.15),
               blurRadius: 8,
               offset: const Offset(0, -2),
             ),
@@ -62,11 +56,6 @@ class MainScreen extends StatelessWidget {
               icon: Icon(Icons.home_outlined),
               selectedIcon: Icon(Icons.home),
               label: "Beranda",
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.category_outlined),
-              selectedIcon: Icon(Icons.category),
-              label: "Kategori",
             ),
             NavigationDestination(
               icon: Icon(Icons.favorite_outline),

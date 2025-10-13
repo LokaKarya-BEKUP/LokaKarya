@@ -10,6 +10,8 @@ import 'package:lokakarya/static/navigation_route.dart';
 import 'package:provider/provider.dart';
 import 'package:lokakarya/provider/main/profile_provider.dart';
 
+import '../../utils/app_snackbar.dart';
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -36,12 +38,10 @@ class HomeScreen extends StatelessWidget {
                       context.read<IndexNavProvider>().setIndexBottomNavBar = 2;
                     },
                     onNotificationTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            "Fitur notifikasi akan ditambahkan nanti!",
-                          ),
-                        ),
+                      showAppSnackBar(
+                        context: context,
+                        message: "Fitur notifikasi akan ditambahkan nanti!",
+                        type: SnackBarType.info,
                       );
                     },
                   );

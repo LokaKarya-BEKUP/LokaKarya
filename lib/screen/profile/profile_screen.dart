@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lokakarya/provider/main/profile_provider.dart';
+import 'package:lokakarya/provider/main/theme_provider.dart';
 import 'package:lokakarya/style/colors/app_colors.dart';
+import 'package:lokakarya/utils/app_snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:lokakarya/static/navigation_route.dart';
 
@@ -45,6 +47,7 @@ class ProfileScreen extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final profileProvider = context.watch<ProfileProvider>();
+    final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(
       appBar: AppBar(title: const Text("Profil Saya"), centerTitle: true),
@@ -57,12 +60,10 @@ class ProfileScreen extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     // TODO: Tambahkan fungsionalitas untuk memilih foto dari galeri
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          "Fitur edit foto akan ditambahkan nanti!",
-                        ),
-                      ),
+                    showAppSnackBar(
+                      context: context,
+                      message: "Fitur edit foto akan ditambahkan nanti!",
+                      type: SnackBarType.info,
                     );
                   },
                   child: Stack(
@@ -110,22 +111,120 @@ class ProfileScreen extends StatelessWidget {
                 Text(
                   "johndoe@email.com", // TODO: Ganti dengan data email sesungguhnya
                   style: textTheme.bodyLarge?.copyWith(
-                    color: colorScheme.onSurface.withOpacity(0.6),
+                    fontWeight: FontWeight.w400,
+                    color: colorScheme.onSurface.withAlpha(70),
                   ),
                 ),
                 const SizedBox(height: 32),
 
-                ListTile(
-                  leading: Icon(Icons.logout, color: colorScheme.error),
-                  title: Text("Keluar", style: textTheme.titleMedium),
-                  onTap: () {
-                    // Logika logout
-                    // Kita akan kembali ke halaman splash atau login
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      NavigationRoute.signInRoute.name,
-                      (Route<dynamic> route) => false,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    /// Dark Mode toggle
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: colorScheme.outline,
+                          width: 1.5,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          /// Icon & title
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.dark_mode_outlined,
+                                color: colorScheme.outline,
+                                size: 32,
+                              ),
+                              const SizedBox(width: 12),
+
+                              Text(
+                                "Mode Gelap",
+                                style: textTheme.bodyLarge,
+                              ),
+                            ],
+                          ),
+
+                          /// Toggle
+                          Switch.adaptive(
+                            value: themeProvider.isDarkMode,
+                            onChanged: (value) {
+                              themeProvider.toggleTheme(value);
+                            },
+                            activeThumbColor: colorScheme.primary,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+
+                /// Logout button
+                OutlinedButton(
+                  onPressed: () {
+                    /// Tampilkan snackbar
+                    showAppSnackBar(
+                      context: context,
+                      message: "Logout berhasil!",
+                      type: SnackBarType.success,
                     );
+
+                    /// Tunggu 2 detik sebelum kembali ke halaman sign in
+                    Future.delayed(const Duration(seconds: 1), () {
+                      if (!context.mounted) return;
+
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        NavigationRoute.signInRoute.name,
+                            (Route<dynamic> route) => false,
+                      );
+                    });
                   },
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(
+                      color: colorScheme.outline,
+                      width: 1.5,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    padding: const EdgeInsets.all(16),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      /// Icon Logout & Title
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.logout,
+                            color: colorScheme.outline,
+                            size: 32,
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            "Keluar",
+                            style: textTheme.bodyLarge,
+                          ),
+                        ],
+                      ),
+
+                      /// Icon arrow right
+                      Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        color: colorScheme.outline,
+                        size: 24,
+                      )
+                    ],
+                  ),
                 ),
               ],
             ),

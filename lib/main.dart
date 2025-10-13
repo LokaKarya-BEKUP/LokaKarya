@@ -6,6 +6,7 @@ import 'package:lokakarya/provider/main/index_nav_provider.dart';
 import 'package:lokakarya/provider/main/favorite_provider.dart';
 import 'package:lokakarya/provider/main/search_provider.dart';
 import 'package:lokakarya/provider/main/profile_provider.dart';
+import 'package:lokakarya/provider/main/theme_provider.dart';
 import 'package:lokakarya/screen/auth/signin/signin_screen.dart';
 import 'package:lokakarya/screen/auth/signup/signup_screen.dart';
 import 'package:lokakarya/screen/detail/detail_screen.dart';
@@ -14,14 +15,21 @@ import 'package:lokakarya/screen/main/main_screen.dart';
 import 'package:lokakarya/screen/splash/splash_screen.dart';
 import 'package:lokakarya/screen/search/search_screen.dart';
 import 'package:lokakarya/screen/product_list/product_list_screen.dart';
+import 'package:lokakarya/services/theme_preferences_service.dart';
 import 'package:lokakarya/static/navigation_route.dart';
 import 'package:lokakarya/style/theme/app_theme.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+
   runApp(
     MultiProvider(
       providers: [
+        Provider(create: (context) => ThemePreferencesService(prefs)),
+        ChangeNotifierProvider(create: (context) => ThemeProvider(context.read<ThemePreferencesService>())),
         ChangeNotifierProvider(create: (context) => SignInProvider()),
         ChangeNotifierProvider(create: (context) => SignUpProvider()),
         ChangeNotifierProvider(create: (context) => IndexNavProvider()),
@@ -43,7 +51,7 @@ class MyApp extends StatelessWidget {
       title: 'LokaKarya',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: context.watch<ThemeProvider>().themeMode,
       initialRoute: NavigationRoute.splashRoute.name,
       routes: {
         NavigationRoute.splashRoute.name: (context) => const SplashScreen(),

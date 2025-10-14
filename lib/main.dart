@@ -1,5 +1,7 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lokakarya/data/model/product.dart';
+import 'package:lokakarya/firebase_options.dart';
 import 'package:lokakarya/provider/auth/signin/signin_provider.dart';
 import 'package:lokakarya/provider/auth/signup/signup_provider.dart';
 import 'package:lokakarya/provider/main/index_nav_provider.dart';
@@ -24,6 +26,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
+
+  /// Inisialisasi Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   runApp(
     MultiProvider(

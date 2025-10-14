@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lokakarya/data/model/category.dart';
 import 'package:lokakarya/data/model/product.dart';
 import 'package:lokakarya/data/model/store.dart';
-import 'package:lokakarya/utils/formatted_price.dart';
-import 'package:provider/provider.dart';
 import 'package:lokakarya/provider/main/favorite_provider.dart';
+import 'package:lokakarya/screen/detail/widgets/contact_seller_section.dart';
+import 'package:lokakarya/screen/detail/widgets/product_info_section.dart';
+import 'package:lokakarya/screen/detail/widgets/store_info_section.dart';
+import 'package:provider/provider.dart';
 
 class DetailScreen extends StatelessWidget {
   final Product product;
@@ -53,66 +54,40 @@ class DetailScreen extends StatelessWidget {
               fit: BoxFit.cover,
             ),
 
-            /// Product Details
+            /// Product Info
+            ProductInfoSection(product: product),
+            Divider(color: colorScheme.outline, thickness: 1.5),
+
+            /// Store Info
+            StoreInfoSection(store: product.getStoreInfo(dummyStores)),
+            Divider(color: colorScheme.outline, thickness: 1.5),
+
+            /// Product Description
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(product.name, style: textTheme.headlineMedium),
-                  const SizedBox(height: 8),
-                  Text(
-                    formatRupiah(product.price),
-                    style: textTheme.headlineSmall?.copyWith(
-                      color: colorScheme.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  /// Category & City
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.category_outlined,
-                        size: 20,
-                        color: colorScheme.onSurface,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        product.getCategoryName(dummyCategories),
-                        style: textTheme.labelLarge,
-                      ),
-                      const SizedBox(width: 16),
-                      Icon(
-                        Icons.location_on_outlined,
-                        size: 20,
-                        color: colorScheme.onSurface,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        product.getStoreCity(dummyStores),
-                        style: textTheme.labelLarge,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-
-                  /// Description
                   Text(
                     "Deskripsi Produk",
                     style: textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
+                      color: colorScheme.primary,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     product.description ?? "Tidak ada deskripsi tersedia.",
                     style: textTheme.bodyLarge,
+                    textAlign: TextAlign.justify,
                   ),
                 ],
               ),
             ),
+            Divider(color: colorScheme.outline, thickness: 1.5),
+
+            /// Contact Seller
+            ContactSellerSection(store: product.getStoreInfo(dummyStores)),
           ],
         ),
       ),

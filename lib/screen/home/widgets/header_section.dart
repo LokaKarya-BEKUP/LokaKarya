@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../style/colors/app_colors.dart';
-import '../../../static/navigation_route.dart';
 
 class HeaderSection extends StatelessWidget {
   final String name;

@@ -34,7 +34,7 @@ class ProductCard extends StatelessWidget {
           color: colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
           border: isDark
-              ? Border.all(color: colorScheme.primary, width: 1)
+              ? Border.all(color: colorScheme.onSurface, width: 1)
               : null,
           boxShadow: [
             if (!isDark)

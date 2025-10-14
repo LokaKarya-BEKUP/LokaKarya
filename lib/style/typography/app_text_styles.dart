@@ -94,7 +94,7 @@ class AppTextStyles {
   /// bodyMedium Text Style
   static TextStyle bodyMedium = _commonStyle.copyWith(
     fontSize: 14,
-    fontWeight: FontWeight.w300,
+    fontWeight: FontWeight.w400,
     height: 1.56,
   );
 

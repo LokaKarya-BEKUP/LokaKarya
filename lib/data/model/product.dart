@@ -34,6 +34,15 @@ extension ProductExtension on Product {
     return store.city;
   }
 
+  /// Mengambil data Store berdasarkan storeId
+  Store? getStoreInfo(List<Store> stores) {
+    try {
+      return stores.firstWhere((s) => s.id == storeId);
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// Menampilkan nama kategori sesuai "categoryId" pada Product
   String getCategoryName(List<CategoryModel> categories) {
     final category = categories.firstWhere(

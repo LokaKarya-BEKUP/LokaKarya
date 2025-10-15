@@ -27,7 +27,10 @@ class HomeScreen extends StatelessWidget {
               Consumer<ProfileProvider>(
                 builder: (context, provider, child) {
                   return HeaderSection(
-                    name: provider.name, // Gunakan nama dari provider
+                    name: provider.isLoading
+                        ? "..."
+                        : provider.user?.name ??
+                              "Nama Pengguna",
                     onSearchTap: () {
                       Navigator.pushNamed(
                         context,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lokakarya/provider/auth/signin/signin_provider.dart';
+import 'package:lokakarya/static/firebase_auth_status.dart';
 import 'package:lokakarya/static/navigation_route.dart';
-import 'package:lokakarya/static/signin_result_state.dart';
 import 'package:lokakarya/utils/app_snackbar.dart';
 import 'package:lokakarya/widgets/auth_header.dart';
 import 'package:lokakarya/widgets/auth_text_field.dart';
@@ -16,6 +16,8 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
+
+  /// Controller input
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -26,48 +28,49 @@ class _SignInScreenState extends State<SignInScreen> {
     super.dispose();
   }
 
-  Future<void> _handleSignIn() async {
+  Future<void> _tapToSignIn() async {
+    final provider = context.read<SignInProvider>();
+
     /// Validasi form
     if (!_formKey.currentState!.validate()) return;
 
-    final provider = context.read<SignInProvider>();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
 
     /// Proses Sign in
-    await provider.signIn(
-      _emailController.text.trim(),
-      _passwordController.text.trim(),
-    );
+    await provider.signInUser(email, password);
 
-    final state = provider.resultState;
+    if (!mounted) return;
 
-    /// Sign in success
-    if (state is SignInSuccessState) {
-      if (!mounted) return;
-
-      showAppSnackBar(
-        context: context,
-        message: "Login berhasil!",
-        type: SnackBarType.success
-      );
-      
-      Future.delayed(const Duration(milliseconds: 800), () {
-        if (!mounted) return;
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          NavigationRoute.mainRoute.name,
-          (route) => false,
+    switch (provider.authStatus) {
+      case FirebaseAuthStatus.authenticated:
+        showAppSnackBar(
+          context: context,
+          message: provider.message ?? "Login berhasil.",
+          type: SnackBarType.success,
         );
-      });
-    }
-    /// Sign in failed
-    else if (state is SignInErrorState) {
-      if (!mounted) return;
 
-      showAppSnackBar(
-        context: context,
-        message: state.error,
-        type: SnackBarType.error
-      );
+        // Navigasi ke halaman beranda
+        Future.delayed(const Duration(milliseconds: 800), () {
+          if (!mounted) return;
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            NavigationRoute.mainRoute.name,
+            (route) => false,
+          );
+        });
+        break;
+
+      case FirebaseAuthStatus.error:
+        showAppSnackBar(
+          context: context,
+          message: provider.message ?? "Login gagal.",
+          type: SnackBarType.error,
+        );
+        break;
+
+      default:
+        break;
     }
   }
 
@@ -85,12 +88,15 @@ class _SignInScreenState extends State<SignInScreen> {
           children: [
             /// Header (Logo & App Name)
             AuthHeader(),
-        
+
             /// Body Content (Form & Button)
             Expanded(
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 24,
+                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(32),
@@ -104,7 +110,10 @@ class _SignInScreenState extends State<SignInScreen> {
                       // Title & Subtitle
                       Column(
                         children: [
-                          Text("Selamat Datang", style: textTheme.headlineMedium),
+                          Text(
+                            "Selamat Datang",
+                            style: textTheme.headlineMedium,
+                          ),
                           const SizedBox(height: 8),
                           Text(
                             "Masuk dan temukan produk lokal di sekitarmu",
@@ -113,12 +122,14 @@ class _SignInScreenState extends State<SignInScreen> {
                         ],
                       ),
                       const SizedBox(height: 32),
-        
+
                       /// Form
                       Consumer<SignInProvider>(
                         builder: (context, provider, child) {
-                          final isLoading = provider.resultState is SignInLoadingState;
-        
+                          final isLoading =
+                              provider.authStatus ==
+                              FirebaseAuthStatus.authenticating;
+
                           return Form(
                             key: _formKey,
                             child: Column(
@@ -136,7 +147,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                       : null,
                                 ),
                                 const SizedBox(height: 16),
-        
+
                                 /// Password
                                 AuthTextField(
                                   controller: _passwordController,
@@ -149,30 +160,31 @@ class _SignInScreenState extends State<SignInScreen> {
                                         : Icons.visibility,
                                     color: colorScheme.outline,
                                   ),
-                                  onSuffixTap: provider.togglePasswordVisibility,
+                                  onSuffixTap:
+                                      provider.togglePasswordVisibility,
                                   validator: (value) =>
                                       value == null || value.isEmpty
                                       ? "Password tidak boleh kosong"
                                       : null,
                                 ),
                                 const SizedBox(height: 32),
-        
+
                                 /// Sign in Button
                                 ElevatedButton(
-                                  onPressed: isLoading ? null : () => _handleSignIn(),
+                                  onPressed: isLoading ? null : _tapToSignIn,
                                   child: isLoading
-                                    ? const SizedBox(
-                                        height: 20,
-                                        width: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                    : const Text("Masuk"),
+                                      ? const SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : const Text("Masuk"),
                                 ),
                                 const SizedBox(height: 16),
-        
+
                                 /// Create Account Button
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,

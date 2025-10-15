@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lokakarya/services/auth_preferences_service.dart';
 import 'package:lokakarya/static/navigation_route.dart';
+import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -16,10 +18,12 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkLogin() async {
-    /// TODO: Ganti 'isLoggedIn' dengan pengecekan login session, misal dari Shared Prefs
-    bool isLoggedIn = false;
+    final authPrefs = context.read<AuthPreferencesService>();
 
+    /// TODO: Ganti 'isLoggedIn' dengan pengecekan login session, misal dari Shared Prefs
     await Future.delayed(const Duration(milliseconds: 500));
+
+    final isLoggedIn = await authPrefs.getLoginStatus();
 
     if (!mounted) return;
 

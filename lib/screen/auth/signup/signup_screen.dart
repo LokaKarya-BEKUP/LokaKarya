@@ -1,14 +1,86 @@
 import 'package:flutter/material.dart';
 import 'package:lokakarya/provider/auth/signup/signup_provider.dart';
+import 'package:lokakarya/static/firebase_auth_status.dart';
+import 'package:lokakarya/utils/app_snackbar.dart';
 import 'package:lokakarya/widgets/auth_header.dart';
 import 'package:lokakarya/widgets/auth_text_field.dart';
 import 'package:provider/provider.dart';
 
 import '../../../static/navigation_route.dart';
 
-class SignUpScreen extends StatelessWidget {
-  SignUpScreen({super.key});
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
+
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
+
+  /// Controller input
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  /// Fungsi tap Register
+  Future<void> _tapToRegister(BuildContext context) async {
+    final provider = context.read<SignUpProvider>();
+
+    /// Validasi Form Key
+    if (!_formKey.currentState!.validate()) return;
+
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    final confirmPassword = _confirmPasswordController.text.trim();
+
+    // Validasi password & konfirmasi password
+    if (password != confirmPassword) {
+      showAppSnackBar(
+        context: context,
+        message: "Konfirmasi password tidak sesuai",
+        type: SnackBarType.error,
+      );
+      return;
+    }
+
+    // Proses register
+    await provider.createAccount(name, email, password);
+
+    // Cek hasil registrasi
+    if (provider.authStatus == FirebaseAuthStatus.accountCreated) {
+      if (!context.mounted) return;
+
+      // Tampilkan snackbar success
+      showAppSnackBar(
+        context: context,
+        message: "Berhasil mendaftarkan akun.",
+        type: SnackBarType.success,
+      );
+
+      // Navigasi kembali ke halaman Sign In
+      Navigator.pushReplacementNamed(context, NavigationRoute.signInRoute.name);
+    } else {
+      if (!context.mounted) return;
+
+      showAppSnackBar(
+        context: context,
+        message: provider.message ?? "",
+        type: SnackBarType.error,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +101,10 @@ class SignUpScreen extends StatelessWidget {
             Expanded(
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 24,
+                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(32),
@@ -63,6 +138,7 @@ class SignUpScreen extends StatelessWidget {
                               children: [
                                 /// Name
                                 AuthTextField(
+                                  controller: _nameController,
                                   label: "Nama",
                                   icon: Icons.person_outline,
                                   keyboardType: TextInputType.name,
@@ -75,6 +151,7 @@ class SignUpScreen extends StatelessWidget {
 
                                 /// Email
                                 AuthTextField(
+                                  controller: _emailController,
                                   label: "Email",
                                   icon: Icons.email_outlined,
                                   keyboardType: TextInputType.emailAddress,
@@ -87,6 +164,7 @@ class SignUpScreen extends StatelessWidget {
 
                                 /// Password
                                 AuthTextField(
+                                  controller: _passwordController,
                                   label: "Password",
                                   icon: Icons.lock_outline,
                                   obscureText: provider.isPasswordHidden,
@@ -96,7 +174,8 @@ class SignUpScreen extends StatelessWidget {
                                         : Icons.visibility,
                                     color: colorScheme.outline,
                                   ),
-                                  onSuffixTap: provider.togglePasswordVisibility,
+                                  onSuffixTap:
+                                      provider.togglePasswordVisibility,
                                   validator: (value) =>
                                       value == null || value.isEmpty
                                       ? "Password tidak boleh kosong"
@@ -106,6 +185,7 @@ class SignUpScreen extends StatelessWidget {
 
                                 /// Confirm Password
                                 AuthTextField(
+                                  controller: _confirmPasswordController,
                                   label: "Konfirmasi Password",
                                   icon: Icons.lock_outline,
                                   obscureText: provider.isPasswordHidden,
@@ -115,7 +195,8 @@ class SignUpScreen extends StatelessWidget {
                                         : Icons.visibility,
                                     color: colorScheme.outline,
                                   ),
-                                  onSuffixTap: provider.togglePasswordVisibility,
+                                  onSuffixTap:
+                                      provider.togglePasswordVisibility,
                                   validator: (value) =>
                                       value == null || value.isEmpty
                                       ? "Konfirmasi Password tidak boleh kosong"
@@ -125,8 +206,19 @@ class SignUpScreen extends StatelessWidget {
 
                                 // Sign up Button
                                 ElevatedButton(
-                                  onPressed: () {},
-                                  child: const Text("Daftar"),
+                                  onPressed:
+                                      provider.authStatus ==
+                                          FirebaseAuthStatus.creatingAccount
+                                      ? null
+                                      : () => _tapToRegister(context),
+                                  child:
+                                      provider.authStatus ==
+                                          FirebaseAuthStatus.creatingAccount
+                                      ? const CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        )
+                                      : const Text("Daftar"),
                                 ),
                                 const SizedBox(height: 16),
 

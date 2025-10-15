@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lokakarya/data/model/product.dart';
@@ -17,6 +19,9 @@ import 'package:lokakarya/screen/main/main_screen.dart';
 import 'package:lokakarya/screen/splash/splash_screen.dart';
 import 'package:lokakarya/screen/search/search_screen.dart';
 import 'package:lokakarya/screen/product_list/product_list_screen.dart';
+import 'package:lokakarya/services/auth_preferences_service.dart';
+import 'package:lokakarya/services/firebase_auth_service.dart';
+import 'package:lokakarya/services/firestore_user_service.dart';
 import 'package:lokakarya/services/theme_preferences_service.dart';
 import 'package:lokakarya/static/navigation_route.dart';
 import 'package:lokakarya/style/theme/app_theme.dart';
@@ -28,21 +33,45 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
 
   /// Inisialisasi Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  final firebaseAuth = FirebaseAuth.instance;
+  final firebaseFirestore = FirebaseFirestore.instance;
 
   runApp(
     MultiProvider(
       providers: [
         Provider(create: (context) => ThemePreferencesService(prefs)),
-        ChangeNotifierProvider(create: (context) => ThemeProvider(context.read<ThemePreferencesService>())),
-        ChangeNotifierProvider(create: (context) => SignInProvider()),
-        ChangeNotifierProvider(create: (context) => SignUpProvider()),
+        Provider(create: (context) => AuthPreferencesService(prefs)),
+        Provider(create: (context) => FirebaseAuthService(firebaseAuth)),
+        Provider(create: (context) => FirestoreUserService(firebaseFirestore)),
+        ChangeNotifierProvider(
+          create: (context) =>
+              ThemeProvider(context.read<ThemePreferencesService>()),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => SignInProvider(
+            context.read<FirebaseAuthService>(),
+            context.read<FirestoreUserService>(),
+            context.read<AuthPreferencesService>(),
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => SignUpProvider(
+            context.read<FirebaseAuthService>(),
+            context.read<FirestoreUserService>(),
+          ),
+        ),
         ChangeNotifierProvider(create: (context) => IndexNavProvider()),
         ChangeNotifierProvider(create: (context) => FavoriteProvider()),
         ChangeNotifierProvider(create: (context) => SearchProvider()),
-        ChangeNotifierProvider(create: (context) => ProfileProvider()),
+        ChangeNotifierProvider(
+          create: (context) => ProfileProvider(
+            context.read<FirebaseAuthService>(),
+            context.read<FirestoreUserService>(),
+            context.read<AuthPreferencesService>(),
+          )..loadUserProfile(),
+        ),
       ],
       child: const MyApp(),
     ),

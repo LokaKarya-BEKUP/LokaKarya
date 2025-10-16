@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lokakarya/data/model/category.dart';
 import 'package:lokakarya/data/model/product.dart';
+import 'package:lokakarya/services/category_service.dart';
 
 import '../../../utils/formatted_price.dart';
 
@@ -47,20 +48,26 @@ class ProductInfoSection extends StatelessWidget {
           const SizedBox(height: 16),
 
           /// Category
-          Row(
-            children: [
-              Icon(
-                Icons.category_outlined,
-                size: 20,
-                color: colorScheme.onSurface,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                product.getCategoryName(dummyCategories),
-                style: textTheme.labelLarge,
-              ),
-            ],
-          ),
+          FutureBuilder<CategoryModel?>(
+          future: CategoryService().getCategoryById(product.categoryId),
+          builder: (context, snapshot) {
+            final categoryName = snapshot.data?.name ?? '-';
+            return Row(
+              children: [
+                Icon(
+                  Icons.category_outlined,
+                  size: 20,
+                  color: colorScheme.onSurface,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  categoryName,
+                  style: textTheme.labelLarge,
+                ),
+              ],
+            );
+          },
+        ),
         ],
       ),
     );

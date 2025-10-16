@@ -9,6 +9,9 @@ import 'package:lokakarya/screen/home/widgets/product_section.dart';
 import 'package:lokakarya/static/navigation_route.dart';
 import 'package:provider/provider.dart';
 import 'package:lokakarya/provider/main/profile_provider.dart';
+import 'package:lokakarya/services/category_service.dart';
+import 'package:lokakarya/services/product_service.dart';
+import 'package:lokakarya/services/store_service.dart';
 
 import '../../utils/app_snackbar.dart';
 
@@ -29,8 +32,7 @@ class HomeScreen extends StatelessWidget {
                   return HeaderSection(
                     name: provider.isLoading
                         ? "..."
-                        : provider.user?.name ??
-                              "Nama Pengguna",
+                        : provider.user?.name ?? "Nama Pengguna",
                     onSearchTap: () {
                       Navigator.pushNamed(
                         context,
@@ -58,13 +60,74 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     /// Category Section
-                    CategorySection(categories: dummyCategories),
-                    const SizedBox(height: 24),
+                    StreamBuilder<List<CategoryModel>>(
+                      stream: CategoryService().getCategoriesStream(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        if (snapshot.hasError) {
+                          return Text('Terjadi kesalahan: ${snapshot.error}');
+                        }
+
+                        final categories = snapshot.data ?? [];
+
+                        if (categories.isEmpty) {
+                          return const Text('Belum ada kategori');
+                        }
+
+                        return CategorySection(categories: categories);
+                      },
+                    ),
 
                     /// All Product Section
-                    ProductSection(
-                      products: dummyProductList,
-                      stores: dummyStores,
+                    StreamBuilder<List<Product>>(
+                      stream: ProductService().getProductsStream(),
+                      builder: (context, productSnapshot) {
+                        if (productSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        if (productSnapshot.hasError) {
+                          return Text(
+                            'Terjadi kesalahan: ${productSnapshot.error}',
+                          );
+                        }
+
+                        final products = productSnapshot.data ?? [];
+
+                        return StreamBuilder<List<Store>>(
+                          stream: StoreService().getStoresStream(),
+                          builder: (context, storeSnapshot) {
+                            if (storeSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+
+                            if (storeSnapshot.hasError) {
+                              return Text(
+                                'Terjadi kesalahan: ${storeSnapshot.error}',
+                              );
+                            }
+
+                            final stores = storeSnapshot.data ?? [];
+
+                            return ProductSection(
+                              products: products,
+                              stores: stores,
+                            );
+                          },
+                        );
+                      },
                     ),
                   ],
                 ),

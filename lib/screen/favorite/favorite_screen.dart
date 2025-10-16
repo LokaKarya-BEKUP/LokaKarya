@@ -5,6 +5,7 @@ import 'package:lokakarya/provider/main/favorite_provider.dart';
 import 'package:lokakarya/static/navigation_route.dart';
 import 'package:lokakarya/widgets/product_card.dart';
 import 'package:provider/provider.dart';
+import 'package:lokakarya/services/store_service.dart';
 
 class FavoriteScreen extends StatelessWidget {
   const FavoriteScreen({super.key});
@@ -35,21 +36,29 @@ class FavoriteScreen extends StatelessWidget {
                 ),
                 itemBuilder: (context, index) {
                   final product = favoriteProducts[index];
-                  final city = product.getStoreCity(dummyStores);
 
-                  return ProductCard(
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        NavigationRoute.detailRoute.name,
-                        arguments: product,
+                  // RETURN FutureBuilder — jangan lupa return!
+                  return FutureBuilder<Store?>(
+                    future: StoreService().getStoreById(product.storeId),
+                    builder: (context, snapshot) {
+                      final store = snapshot.data;
+                      final city = store?.city ?? "-";
+
+                      return ProductCard(
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            NavigationRoute.detailRoute.name,
+                            arguments: product,
+                          );
+                        },
+                        name: product.name,
+                        price: product.price,
+                        unit: product.unit,
+                        city: city,
+                        imageUrl: product.imageUrl ?? "",
                       );
                     },
-                    name: product.name,
-                    price: product.price,
-                    unit: product.unit,
-                    city: city,
-                    imageUrl: product.imageUrl ?? "",
                   );
                 },
               ),

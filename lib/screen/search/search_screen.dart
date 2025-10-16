@@ -4,7 +4,7 @@ import 'package:lokakarya/provider/main/search_provider.dart';
 import 'package:lokakarya/static/navigation_route.dart';
 import 'package:lokakarya/widgets/product_card.dart';
 import 'package:provider/provider.dart';
-import 'package:lokakarya/data/model/product.dart';
+import 'package:lokakarya/services/store_service.dart';
 
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key});
@@ -27,10 +27,8 @@ class SearchScreen extends StatelessWidget {
                   borderSide: BorderSide.none,
                 ),
                 filled: true,
-                // GANTI DARI 'surfaceVariant' KE 'surfaceContainerHighest'
-                fillColor: Theme.of(
-                  context,
-                ).colorScheme.surfaceContainerHighest,
+                fillColor:
+                    Theme.of(context).colorScheme.surfaceContainerHighest,
               ),
               onChanged: (query) {
                 context.read<SearchProvider>().filterProducts(query);
@@ -42,6 +40,7 @@ class SearchScreen extends StatelessWidget {
             Consumer<SearchProvider>(
               builder: (context, provider, child) {
                 final filteredProducts = provider.filteredProducts;
+
                 if (filteredProducts.isEmpty &&
                     provider.searchQuery.isNotEmpty) {
                   return const Expanded(
@@ -60,28 +59,35 @@ class SearchScreen extends StatelessWidget {
                     itemCount: filteredProducts.length,
                     gridDelegate:
                         const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 200.0,
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                          mainAxisExtent: 230,
-                        ),
+                      maxCrossAxisExtent: 200.0,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      mainAxisExtent: 230,
+                    ),
                     itemBuilder: (context, index) {
                       final product = filteredProducts[index];
-                      final city = product.getStoreCity(dummyStores);
 
-                      return ProductCard(
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            NavigationRoute.detailRoute.name,
-                            arguments: product,
+                      return FutureBuilder<Store?>(
+                        future: StoreService().getStoreById(product.storeId),
+                        builder: (context, snapshot) {
+                          final store = snapshot.data;
+                          final city = store?.city ?? "-";
+
+                          return ProductCard(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                NavigationRoute.detailRoute.name,
+                                arguments: product,
+                              );
+                            },
+                            name: product.name,
+                            price: product.price,
+                            unit: product.unit,
+                            city: city,
+                            imageUrl: product.imageUrl ?? "",
                           );
                         },
-                        name: product.name,
-                        price: product.price,
-                        unit: product.unit,
-                        city: city,
-                        imageUrl: product.imageUrl ?? "",
                       );
                     },
                   ),

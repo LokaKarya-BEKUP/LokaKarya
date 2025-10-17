@@ -7,8 +7,9 @@ import '../../../style/colors/app_colors.dart';
 
 class ContactSellerSection extends StatelessWidget {
   final Store? store;
+  final String? productName;
 
-  const ContactSellerSection({super.key, this.store});
+  const ContactSellerSection({super.key, this.store, this.productName});
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +33,13 @@ class ContactSellerSection extends StatelessWidget {
           /// Button Whatsapp
           ElevatedButton.icon(
             onPressed: () async {
+              final message = "Halo ${store!.name},\n"
+                  "saya tertarik dengan produk *${productName ?? 'Anda'}*.\n"
+                  "Apakah masih tersedia?";
+
               final success = await UrlLauncerService.openWhatsApp(
                 phone: store!.phone,
-                message: "Halo ${store!.name}, saya tertarik dengan produk Anda!"
+                message: message,
               );
 
               /// Tampilkan snackbar ketika gagal

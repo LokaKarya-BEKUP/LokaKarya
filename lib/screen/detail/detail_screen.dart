@@ -117,7 +117,7 @@ class DetailScreen extends StatelessWidget {
                 }
 
                 final store = snapshot.data;
-                return ContactSellerSection(store: store);
+                return ContactSellerSection(store: store, productName: product.name);
               },
             ),
           ],

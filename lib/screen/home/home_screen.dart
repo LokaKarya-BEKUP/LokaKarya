@@ -42,13 +42,7 @@ class HomeScreen extends StatelessWidget {
                     onProfileTap: () {
                       context.read<IndexNavProvider>().setIndexBottomNavBar = 2;
                     },
-                    onNotificationTap: () {
-                      showAppSnackBar(
-                        context: context,
-                        message: "Fitur notifikasi akan ditambahkan nanti!",
-                        type: SnackBarType.info,
-                      );
-                    },
+                    onNotificationTap: () => showComingSoonSnackBar(context, featureName: "Notifikasi"),
                   );
                 },
               ),

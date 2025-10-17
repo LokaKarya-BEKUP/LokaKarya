@@ -16,12 +16,12 @@ class FirebaseAuthService {
       return result;
     } on FirebaseAuthException catch (e) {
       final errorMessage = switch (e.code) {
-        "email-already-in-use" => "Email sudah digunakan. Silahkan gunakan email lain.",
+        "email-already-in-use" => "Email sudah digunakan. Silakan gunakan email lain.",
         "invalid-email" => "Alamat email tidak valid.",
-        "operation-not-allowed" => "Server error, silahkan coba lagi nanti.",
+        "operation-not-allowed" => "Server error, Silakan coba lagi nanti.",
         "weak-password" => "Kata sandi terlalu lemah. Gunakan kombinasi huruf, angka, dan simbol.",
-        "network-request-failed" => "Tidak ada koneksi internet. Silahkan cek jaringan Anda.",
-        _ => "Pendaftaran gagal. Silahkan coba lagi.",
+        "network-request-failed" => "Tidak ada koneksi internet. Silakan cek jaringan Anda.",
+        _ => "Pendaftaran gagal. Silakan coba lagi.",
       };
       throw Exception(errorMessage);
     } catch (e) {
@@ -42,9 +42,9 @@ class FirebaseAuthService {
         "invalid-email" => "Alamat email tidak valid.",
         "user-disabled" => "Akun Anda telah dinonaktifkan. Hubungi administrator.",
         "user-not-found" => "Akun dengan email tersebut tidak ditemukan.",
-        "wrong-password" => "Email atau kata sandi yang Anda masukkan salah.",
-        "network-request-failed" => "Tidak ada koneksi internet. Silahkan cek jaringan Anda.",
-        _ => "Gagal masuk. Silahkan coba lagi.",
+        "invalid-credential" => "Email atau kata sandi yang Anda masukkan salah.",
+        "network-request-failed" => "Tidak ada koneksi internet. Silakan cek jaringan Anda.",
+        _ => "Gagal masuk. Silakan coba lagi.",
       };
       throw Exception(errorMessage);
     } catch (e) {

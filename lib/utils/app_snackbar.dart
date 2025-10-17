@@ -93,3 +93,14 @@ void showAppSnackBar({
     ),
   );
 }
+
+/// Snackbar for Coming Soon Feature
+void showComingSoonSnackBar(BuildContext context, {String? featureName}) {
+  showAppSnackBar(
+    context: context,
+    message: featureName != null
+      ? "Fitur $featureName akan segera hadir di pembaruan berikutnya!"
+      : "Fitur ini akan segera hadir di pembaruan berikutnya!",
+    type: SnackBarType.info,
+  );
+}

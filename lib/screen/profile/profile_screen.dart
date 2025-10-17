@@ -14,9 +14,13 @@ class ProfileScreen extends StatelessWidget {
     final TextEditingController nameController = TextEditingController(
       text: provider.user?.name ?? "",
     );
+
+    // Simpan context utama
+    final parentContext = context;
+
     showDialog(
-      context: context,
-      builder: (context) {
+      context: parentContext,
+      builder: (dialogContext) {
         return AlertDialog(
           title: const Text("Edit Nama"),
           content: TextField(
@@ -26,7 +30,7 @@ class ProfileScreen extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
               },
               child: const Text("Batal"),
             ),
@@ -35,7 +39,7 @@ class ProfileScreen extends StatelessWidget {
                 final newName = nameController.text.trim();
                 if (newName.isEmpty) {
                   showAppSnackBar(
-                    context: context,
+                    context: parentContext,
                     message: "Nama tidak boleh kosong.",
                     type: SnackBarType.error,
                   );
@@ -44,23 +48,23 @@ class ProfileScreen extends StatelessWidget {
 
                 await provider.updateUserName(newName);
 
-                if (!context.mounted) return;
+                if (!parentContext.mounted) return;
 
                 if (provider.errorMessage == null) {
                   showAppSnackBar(
-                    context: context,
+                    context: parentContext,
                     message: "Nama berhasil diperbarui!",
                     type: SnackBarType.success,
                   );
                 } else {
                   showAppSnackBar(
-                    context: context,
+                    context: parentContext,
                     message: provider.errorMessage!,
                     type: SnackBarType.error,
                   );
                 }
 
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
               },
               child: const Text("Simpan"),
             ),
@@ -122,14 +126,7 @@ class ProfileScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          // TODO: Tambahkan fungsionalitas untuk memilih foto dari galeri
-                          showAppSnackBar(
-                            context: context,
-                            message: "Fitur edit foto akan ditambahkan nanti!",
-                            type: SnackBarType.info,
-                          );
-                        },
+                        onTap: () => showComingSoonSnackBar(context, featureName: "Edit Foto"),
                         child: Stack(
                           alignment: Alignment.bottomRight,
                           children: [

@@ -80,28 +80,17 @@ class ProfileScreen extends StatelessWidget {
 
     await profileProvider.signOut(context);
 
-    if (profileProvider.errorMessage == null) {
-      if (!context.mounted) return;
-
+    if (context.mounted) {
       showAppSnackBar(
         context: context,
-        message: "Logout berhasil!",
+        message: "Logout berhasil.",
         type: SnackBarType.success,
       );
 
-      if (context.mounted) {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          NavigationRoute.signInRoute.name,
-          (Route<dynamic> route) => false,
-        );
-      } else {
-        if (!context.mounted) return;
-        showAppSnackBar(
-          context: context,
-          message: profileProvider.errorMessage!,
-          type: SnackBarType.error,
-        );
-      }
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        NavigationRoute.signInRoute.name,
+        (Route<dynamic> route) => false,
+      );
     }
   }
 
@@ -126,7 +115,10 @@ class ProfileScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       GestureDetector(
-                        onTap: () => showComingSoonSnackBar(context, featureName: "Edit Foto"),
+                        onTap: () => showComingSoonSnackBar(
+                          context,
+                          featureName: "Edit Foto",
+                        ),
                         child: Stack(
                           alignment: Alignment.bottomRight,
                           children: [
@@ -161,7 +153,9 @@ class ProfileScreen extends StatelessWidget {
                             const CircularProgressIndicator()
                           else
                             Text(
-                              user?.name ?? "Nama Pengguna",
+                              isLoading
+                                  ? "Memuat..."
+                                  : (user?.name ?? "Nama Pengguna"),
                               style: textTheme.headlineMedium,
                             ),
 
@@ -178,10 +172,13 @@ class ProfileScreen extends StatelessWidget {
                         ],
                       ),
                       Text(
-                        isLoading ? "-" : user?.email ?? "-", // TODO: Ganti dengan data email sesungguhnya
+                        isLoading
+                            ? "-"
+                            : user?.email ??
+                                  "-", // TODO: Ganti dengan data email sesungguhnya
                         style: textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.w400,
-                          color: colorScheme.onSurface.withAlpha(70),
+                          color: colorScheme.onSurface.withAlpha(80),
                         ),
                       ),
                       const SizedBox(height: 32),

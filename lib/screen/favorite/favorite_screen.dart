@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lokakarya/data/model/product.dart';
 import 'package:lokakarya/data/model/store.dart';
 import 'package:lokakarya/provider/main/favorite_provider.dart';
 import 'package:lokakarya/static/navigation_route.dart';

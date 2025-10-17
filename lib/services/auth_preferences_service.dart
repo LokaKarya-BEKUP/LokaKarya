@@ -6,14 +6,10 @@ class AuthPreferencesService {
   AuthPreferencesService(this._authPreferences);
 
   static const String _keyIsLoggedIn = 'isLoggedIn';
-  static const String _keyUserId = 'userId';
 
   /// Simpan status Login dan User ID
-  Future<void> setLoginStatus(bool isLoggedIn, {String? userId}) async {
+  Future<void> setLoginStatus(bool isLoggedIn) async {
     await _authPreferences.setBool(_keyIsLoggedIn, isLoggedIn);
-    if (userId != null) {
-      await _authPreferences.setString(_keyUserId, userId);
-    }
   }
 
   /// Ambil status login
@@ -21,14 +17,8 @@ class AuthPreferencesService {
     return _authPreferences.getBool(_keyIsLoggedIn) ?? false;
   }
 
-  /// Ambil user ID
-  Future<String?> getUserId() async {
-    return _authPreferences.getString(_keyUserId);
-  }
-
   /// Hapus status login
   Future<void> clearLoginStatus() async {
     await _authPreferences.remove(_keyIsLoggedIn);
-    await _authPreferences.remove(_keyUserId);
   }
 }

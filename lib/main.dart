@@ -70,7 +70,7 @@ void main() async {
             context.read<FirebaseAuthService>(),
             context.read<FirestoreUserService>(),
             context.read<AuthPreferencesService>(),
-          )..loadUserProfile(),
+          ),
         ),
       ],
       child: const MyApp(),

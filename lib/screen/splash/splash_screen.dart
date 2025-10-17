@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lokakarya/services/auth_preferences_service.dart';
 import 'package:lokakarya/static/navigation_route.dart';
@@ -19,15 +20,16 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _checkLogin() async {
     final authPrefs = context.read<AuthPreferencesService>();
+    final firebaseUser = FirebaseAuth.instance.currentUser;
 
     /// TODO: Ganti 'isLoggedIn' dengan pengecekan login session, misal dari Shared Prefs
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 800));
 
     final isLoggedIn = await authPrefs.getLoginStatus();
 
     if (!mounted) return;
 
-    if (isLoggedIn) {
+    if (isLoggedIn && firebaseUser != null) {
       Navigator.pushReplacementNamed(context, NavigationRoute.mainRoute.name);
     } else {
       Navigator.pushReplacementNamed(context, NavigationRoute.signInRoute.name);
@@ -36,6 +38,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: SizedBox.shrink());
+    return const Scaffold(
+      body: Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
+    );
   }
 }

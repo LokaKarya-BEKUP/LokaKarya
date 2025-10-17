@@ -6,6 +6,12 @@ class FirebaseAuthService {
   FirebaseAuthService(FirebaseAuth? auth)
     : _auth = auth ??= FirebaseAuth.instance;
 
+  /// Stream perubahan autentikasi (login/logout)
+  Stream<User?> get authStateChanges => _auth.authStateChanges();
+
+  /// Ambil data user yang sedang login
+  User? get currentUser => _auth.currentUser;
+
   /// Register User
   Future<UserCredential> createUser(String email, String password) async {
     try {

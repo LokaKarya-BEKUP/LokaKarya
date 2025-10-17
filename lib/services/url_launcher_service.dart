@@ -12,10 +12,17 @@ class UrlLauncerService {
 
     final canLaunch = await canLaunchUrl(whatsappUrl);
 
-    if (canLaunch) {
-      await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
-      return true;
-    } else {
+    try {
+      /// Coba buka langsung di aplikasi WhatsApp
+      if (canLaunch) {
+        await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
+        return true;
+      } else {
+        /// Jika gagal, fallback ke browser
+        await launchUrl(whatsappUrl, mode: LaunchMode.platformDefault);
+        return true;
+      }
+    } catch (_) {
       return false;
     }
   }

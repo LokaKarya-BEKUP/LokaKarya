@@ -34,53 +34,47 @@ class HeaderSection extends StatelessWidget {
         children: [
           /// Greetings
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    /// Profile Picture (Tambahkan GestureDetector)
-                    GestureDetector(
-                      onTap: onProfileTap,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(50),
-                        child: Image.asset(
-                          "assets/images/profile_default.png",
-                          width: 64,
-                          height: 64,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
+              GestureDetector(
+                onTap: onProfileTap,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(50),
+                  child: Image.asset(
+                    "assets/images/profile_default.png",
+                    width: 64,
+                    height: 64,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
 
-                    /// Greeting Text
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Halo, $name",
-                          style: textTheme.headlineSmall?.copyWith(
-                            color: colorScheme.onPrimary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          "Mau cari apa hari ini?",
-                          style: textTheme.bodyLarge?.copyWith(
-                            color: colorScheme.onPrimary,
-                          ),
-                        ),
-                      ],
+              /// Greeting Text
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Halo, $name",
+                      style: textTheme.headlineSmall?.copyWith(
+                        color: colorScheme.onPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "Mau cari apa hari ini?",
+                      style: textTheme.bodyLarge?.copyWith(
+                        color: colorScheme.onPrimary,
+                      ),
                     ),
                   ],
                 ),
               ),
+              const SizedBox(width: 8),
 
               /// Notification Icon (Tambahkan GestureDetector)
               GestureDetector(

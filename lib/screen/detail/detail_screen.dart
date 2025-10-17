@@ -7,6 +7,7 @@ import 'package:lokakarya/screen/detail/widgets/product_info_section.dart';
 import 'package:lokakarya/screen/detail/widgets/store_info_section.dart';
 import 'package:provider/provider.dart';
 import 'package:lokakarya/services/store_service.dart';
+import 'package:readmore/readmore.dart';
 
 class DetailScreen extends StatelessWidget {
   final Product product;
@@ -88,8 +89,13 @@ class DetailScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
+                  ReadMoreText(
                     product.description ?? "Tidak ada deskripsi tersedia.",
+                    trimLines: 5,
+                    colorClickableText: colorScheme.primary,
+                    trimMode: TrimMode.Line,
+                    trimCollapsedText: ">Selengkapnya",
+                    trimExpandedText: " <Sembunyikan",
                     style: textTheme.bodyLarge,
                     textAlign: TextAlign.justify,
                   ),

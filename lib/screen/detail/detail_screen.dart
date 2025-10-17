@@ -6,6 +6,7 @@ import 'package:lokakarya/screen/detail/widgets/contact_seller_section.dart';
 import 'package:lokakarya/screen/detail/widgets/product_info_section.dart';
 import 'package:lokakarya/screen/detail/widgets/store_info_section.dart';
 import 'package:provider/provider.dart';
+import 'package:lokakarya/services/store_service.dart';
 
 class DetailScreen extends StatelessWidget {
   final Product product;
@@ -59,7 +60,18 @@ class DetailScreen extends StatelessWidget {
             Divider(color: colorScheme.outline, thickness: 1.5),
 
             /// Store Info
-            StoreInfoSection(store: product.getStoreInfo(dummyStores)),
+            FutureBuilder<Store?>(
+              future: StoreService().getStoreById(product.storeId),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return Text("Gagal memuat data toko: ${snapshot.error}");
+                }
+                return StoreInfoSection(store: snapshot.data);
+              },
+            ),
             Divider(color: colorScheme.outline, thickness: 1.5),
 
             /// Product Description
@@ -87,7 +99,27 @@ class DetailScreen extends StatelessWidget {
             Divider(color: colorScheme.outline, thickness: 1.5),
 
             /// Contact Seller
-            ContactSellerSection(store: product.getStoreInfo(dummyStores)),
+            FutureBuilder<Store?>(
+              future: StoreService().getStoreById(product.storeId),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                if (snapshot.hasError) {
+                  return Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text('Gagal memuat data toko: ${snapshot.error}'),
+                  );
+                }
+
+                final store = snapshot.data;
+                return ContactSellerSection(store: store);
+              },
+            ),
           ],
         ),
       ),

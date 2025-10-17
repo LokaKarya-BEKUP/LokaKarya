@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -65,4 +62,15 @@ class DefaultFirebaseOptions {
     storageBucket: 'lokakarya-app.firebasestorage.app',
     iosBundleId: 'com.example.lokakarya',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyBk5EKWgUdG4ge4JFt0CIcM5IzySAZylFo',
+    appId: '1:432861693901:web:47525cb5903d52b2f8a684',
+    messagingSenderId: '432861693901',
+    projectId: 'lokakarya-app',
+    authDomain: 'lokakarya-app.firebaseapp.com',
+    storageBucket: 'lokakarya-app.firebasestorage.app',
+    measurementId: 'G-97P7283HJQ',
+  );
+
 }

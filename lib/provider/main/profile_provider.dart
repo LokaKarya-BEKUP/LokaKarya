@@ -15,7 +15,28 @@ class ProfileProvider extends ChangeNotifier {
     this._authService,
     this._userService,
     this._preferencesService,
-  );
+  ) {
+    // Stream perubahan user login/logout
+    _authService.authStateChanges.listen((firebaseUser) async {
+      // Jika logout secara manual, jangan trigger rebuild
+      if (_isSigningOut) return;
+
+      if (firebaseUser != null) {
+        // Jika user login, ambil data dari Firestore
+        await loadUserProfile(firebaseUser.uid);
+      } else {
+        // Jika user logout, hapus data lokal
+        _user = null;
+        notifyListeners();
+      }
+    });
+
+    // Cek apakah user sudah login
+    final currentUser = _authService.currentUser;
+    if (currentUser != null) {
+      loadUserProfile(currentUser.uid);
+    }
+  }
 
   UserModel? _user;
   UserModel? get user => _user;
@@ -26,21 +47,15 @@ class ProfileProvider extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
+  bool _isSigningOut = false;
+
   /// Ambil data profil user yang sedang Login
-  Future<void> loadUserProfile() async {
+  Future<void> loadUserProfile(String userId) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final userId = await _preferencesService.getUserId();
-
-      if (userId == null) {
-        _errorMessage = "User belum melakukan login.";
-        _user = null;
-        return;
-      }
-
       final userData = await _userService.getUserById(userId);
       if (userData != null) {
         _user = userData;
@@ -72,13 +87,21 @@ class ProfileProvider extends ChangeNotifier {
   /// Logout user
   Future<void> signOut(BuildContext context) async {
     try {
+      _isSigningOut = true;
+      _errorMessage = null;
+
+      // Sign Out dari Firebase dan hapus login status
       await _authService.signOut();
       await _preferencesService.clearLoginStatus();
 
       _user = null;
+
+      // Setelah navigasi selesai, reset flag & notify
+      await Future.delayed(const Duration(milliseconds: 300));
+      _isSigningOut = false;
     } on Exception catch (e) {
       _errorMessage = getErrorMessage(e);
-    } finally {
+      _isSigningOut = false;
       notifyListeners();
     }
   }

@@ -50,7 +50,7 @@ class SignInProvider extends ChangeNotifier {
       _user = await _userService.getUserById(firebaseUser!.uid);
 
       /// Simpan status login ke Shared Preferences
-      await _preferencesService.setLoginStatus(true, userId: _user!.id);
+      await _preferencesService.setLoginStatus(true);
 
       _authStatus = FirebaseAuthStatus.authenticated;
       _message = "Login berhasil.";
@@ -69,6 +69,7 @@ class SignInProvider extends ChangeNotifier {
       _message = null;
       notifyListeners();
 
+      /// Logout dari Firebase
       await _authService.signOut();
 
       /// Hapus status login

@@ -152,11 +152,15 @@ class ProfileScreen extends StatelessWidget {
                           if (isLoading)
                             const CircularProgressIndicator()
                           else
-                            Text(
-                              isLoading
-                                  ? "Memuat..."
-                                  : (user?.name ?? "Nama Pengguna"),
-                              style: textTheme.headlineMedium,
+                            Flexible(
+                              child: Text(
+                                isLoading
+                                    ? "Memuat..."
+                                    : (user?.name ?? "Nama Pengguna"),
+                                style: textTheme.headlineMedium,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
 
                           if (!isLoading)

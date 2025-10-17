@@ -29,10 +29,15 @@ class HomeScreen extends StatelessWidget {
               /// Header Section
               Consumer<ProfileProvider>(
                 builder: (context, provider, child) {
+                  final fullname = provider.user?.name;
+                  final firstName = (fullname != null && fullname.isNotEmpty)
+                      ? fullname.split(" ").first
+                      : "Nama Pengguna";
+
                   return HeaderSection(
                     name: provider.isLoading
                         ? "..."
-                        : provider.user?.name ?? "Nama Pengguna",
+                        : firstName,
                     onSearchTap: () {
                       Navigator.pushNamed(
                         context,

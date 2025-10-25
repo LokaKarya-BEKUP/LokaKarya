@@ -116,19 +116,8 @@ Di Firebase Console, aktifkan:
 
 ### Step 4: Setup Firestore Database
 
-Buat 4 collections berikut di Firestore:
+Buat 3 collections berikut di Firestore:
 
-#### Collection: `users`
-```
-{
-  "id": "string",
-  "email": "string",
-  "name": "string",
-  "photoUrl": "string",
-  "createdAt": "timestamp"
-  "updatedAt": "timestamp"
-}
-```
 
 #### Collection: `stores`
 ```
